@@ -1,33 +1,27 @@
-<h1>Create Category</h1>
-
-<form method="POST" action="{{ route('categories.save') }}">
-    @csrf
-    <div>
-        <label for="name">Name:</label>
-        <input type="text" id="name" name="name">
-    </div>
-    <div>
-        <label for="status">Status:</label>
-        <select id="status" name="status">
-            <option value="1" selected>Active</option>
-            <option value="2">Inactive</option>
-        </select>
-    </div>
-    <div>
-        <label for="parent_id">Parent Category:</label>
-        <select id="parent_id" name="parent_id">
-            <option value="" selected>Select Parent Category</option>
-            @if($categories)
-                @foreach($categories as $parentCategory)
-                    <option value="{{ $parentCategory->id }}">{{ $parentCategory->name }}</option>
-                    @if($parentCategory->children && $parentCategory->children->count() > 0)
-                        @foreach($parentCategory->children as $childCategory)
-                            <option value="{{ $childCategory->id }}">-- {{ $childCategory->name }}</option>
-                        @endforeach
-                    @endif
+<div class="container">
+    <h1>Add Category</h1>
+    <form action="{{ route('categories.save') }}" method="POST">
+        @csrf
+        <div class="form-group">
+            <label for="name">Name</label>
+            <input type="text" name="name" id="name" class="form-control" required>
+        </div>
+        <div class="form-group">
+            <label for="status">Status</label>
+            <select name="status" id="status" class="form-control" required>
+                <option value="1">Enabled</option>
+                <option value="0">Disabled</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="parent_id">Parent Category</label>
+            <select name="parent_id" id="parent_id" class="form-control">
+                <option value="">None</option>
+                @foreach ($categories as $category)
+                    <option value="{{ $category->id }}">{{ $category->full_name }}</option>
                 @endforeach
-            @endif
-        </select>
-    </div>
-    <button type="submit">Create</button>
-</form>
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Add Category</button>
+    </form>
+</div>

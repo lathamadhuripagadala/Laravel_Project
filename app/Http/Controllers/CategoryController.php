@@ -8,24 +8,12 @@ use App\Models\Category;
 
 class CategoryController extends Controller
 {
+
     public function index()
     {
         $categories = Category::all();
-        foreach ($categories as $category) {
-            $category->hierarchy = $this->getHierarchy($category);
-        }
-        return view('categories.index', ['categories' => $categories]);
-    }
 
-    private function getHierarchy($category)
-    {
-        $hierarchy = $category->name;
-        $parent = Category::find($category->parent_id);
-        while ($parent) {
-            $hierarchy = $parent->name . ' > ' . $hierarchy;
-            $parent = Category::find($parent->parent_id);
-        }
-        return $hierarchy;
+        return view('categories.index', ['categories' => $categories]);
     }
 
     public function create()
@@ -68,15 +56,17 @@ class CategoryController extends Controller
     public function update(Request $request, Category $category)
     {
         $category->update($request->all());
+
         return view('categories.index', ['categories' => Category::all()]);
     }
 
     public function delete(Category $category)
     {
-        $category = Category::find($category->id);
+        $parentCategoryId = $category->parent_id;
+        Category::where('parent_id', $category->id)->update(['parent_id' => $parentCategoryId]);
         $category->delete();
 
-        return view('categories.index', ['categories' => Category::all()]);
+        return redirect()->route('categories.index');
     }
 
 
